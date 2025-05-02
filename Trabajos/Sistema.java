@@ -1,0 +1,66 @@
+package Trabajos;
+
+import Trabajos.Tren;
+import kareltherobot.Directions;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Sistema {
+
+    boolean esta_inicializado;
+    public final ReentrantLock bloqueo = new ReentrantLock();
+    ArrayList<Tren> taller = new ArrayList<>();
+    ArrayList<Tren> lineaA = new ArrayList<>();
+    ArrayList<Tren> lineaB = new ArrayList<>();
+
+    boolean[][] posiciones = new boolean[36][21];
+    public Sistema(){
+        short cont = 0;
+        short cont_aux = 1;
+        Directions.Direction actual_direction = Directions.North;
+
+        int x = 15, y = 34;
+
+        for(int i = 0; i < 10; i++){
+            if(cont_aux == 3) {
+                taller.add(new Tren(y, x, actual_direction, Color.GREEN, this));
+                taller.get(cont).setLinea("B");
+                cont_aux = 1;
+            }
+            else{
+                taller.add(new Tren(y, x, actual_direction, Color.BLUE, this));
+                if(cont_aux == 1){
+                    taller.get(cont).setLinea("AN");
+                }
+                else{
+                    taller.get(cont).setLinea("AE");
+                }
+                cont_aux++;
+            }
+            posiciones[y][x] = true;
+            taller.get(cont).setSgte_accion("salirtaller");
+            if(actual_direction == Directions.East) x++;
+            else if(actual_direction == Directions.West) x--;
+            else if(actual_direction == Directions.North) y++;
+            else if(actual_direction == Directions.South) y--;
+
+            if(y == 35 && x == 15) actual_direction = Directions.West;
+            else if((y == 35 && x == 1) || (y == 34 && x == 14) ) actual_direction = Directions.South;
+            else if((y == 34 && x == 1) || (y == 32 && x == 14)) actual_direction = Directions.East;
+
+            cont++;
+        }
+    }
+
+    public static void despachar(){
+
+    }
+
+    public void inicializar(){
+        new Thread(taller.getLast()).start();
+        new Thread(taller.get(taller.size()-2)).start();
+        new Thread(taller.get(taller.size()-3)).start();
+    }
+
+}

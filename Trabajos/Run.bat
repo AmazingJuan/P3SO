@@ -1,1 +1,1 @@
-java -cp ".;KarelJRobot.jar" %1
+java -cp ".;KarelJRobot.jar" Trabajos.Main

@@ -14,6 +14,7 @@ class Tren extends Robot
     int y;
     String sgte_accion;
     Sistema ref_sistema;
+    boolean esperando_moverse = false;
 
     public void setLinea(String linea) {
         this.linea = linea;
@@ -47,23 +48,24 @@ class Tren extends Robot
 
 
         while(x != 16 || y != 32){
-            if((y == 35 && x == 15) || (x == 1 && y == 35)
-                    || (x == 1 && y == 34)) turnLeft();
+            if(!esperando_moverse) {
+                if ((y == 35 && x == 15) || (x == 1 && y == 35)
+                        || (x == 1 && y == 34)) turnLeft();
 
-            if(y == 34 && x == 14){
-                turnLeft();
-                turnLeft();
-                turnLeft();
+                if (y == 34 && x == 14) {
+                    turnLeft();
+                    turnLeft();
+                    turnLeft();
+                }
+
+                if (y == 32 && x == 14) {
+                    turnLeft();
+                    turnLeft();
+                    turnLeft();
+                    turnLeft();
+                    turnLeft();
+                }
             }
-
-            if(y == 32 && x == 14){
-                turnLeft();
-                turnLeft();
-                turnLeft();
-                turnLeft();
-                turnLeft();
-            }
-
             avanzar();
         }
 
@@ -97,10 +99,12 @@ class Tren extends Robot
             y = next_y;
             ref_sistema.posiciones[next_y][next_x] = true;
             ref_sistema.bloqueo.unlock();
+            esperando_moverse = false;
             move();
         }
         else{
             ref_sistema.bloqueo.unlock();
+            esperando_moverse = true;
         }
 
     }

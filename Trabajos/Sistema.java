@@ -10,6 +10,7 @@ public class Sistema {
 
     char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
     public final ReentrantLock bloqueo = new ReentrantLock();
+    short trenes_extremos = 0;
     ArrayList<Tren> taller = new ArrayList<>();
     ArrayList<Tren> lineaA = new ArrayList<>();
     ArrayList<Tren> lineaB = new ArrayList<>();

@@ -91,8 +91,13 @@ class Tren extends Robot
             x=11;
         }
 
-        return this.x == x && this.y == y;
+        if(this.x == x && this.y == y){
+            ref_sistema.trenes_extremos++;
+            return true;
+        }
+        else return false;
     }
+
 
     public void turnRight(){
         turnLeft();

@@ -31,10 +31,10 @@ public class Sistema {
             else{
                 taller.add(new Tren(y, x, actual_direction, Color.BLUE, this));
                 if(cont_aux == 1){
-                    taller.get(cont).setRuta("B");
+                    taller.get(cont).setRuta("AE");
                 }
                 else{
-                    taller.get(cont).setRuta("B");
+                    taller.get(cont).setRuta("AN");
                 }
                 cont_aux++;
             }

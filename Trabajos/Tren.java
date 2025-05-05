@@ -82,7 +82,7 @@ class Tren extends Robot
             x = 1;
             y = 16;
         }
-        else if (ruta.equals("AN")){
+        else if (ruta.equals("AE")){
             x = 19;
             y = 35;
         }
@@ -103,56 +103,71 @@ class Tren extends Robot
     public void ir_extremos(){
         while (!llego_extremo()) {
             if(!esperando_moverse) {
-                if((ruta.equals("B") || ruta.equals("AE")) && y>=19){
-                    if(y == 32 && x == 16){
+                if (ruta.equals("B") || ruta.equals("AN")) {
+                    if (
+                            (y == 32 && x == 16) ||
+                                    (y == 29 && x == 16) ||
+                                    (y == 26 && x == 15) ||
+                                    (y == 23 && x == 13)
+                    ) {
                         turnRight();
-                    }
-                    else if(y == 29 && x == 16){
-                        turnRight();
-                    }
-                    else if(y == 29 && x == 15){
-                        turnLeft();
-                    }
-                    else if(y == 26 && x == 15){
-                        turnRight();
-                    }
-                    else if(y == 26 && x == 13){
-                        turnLeft();
-                    }
-                    else if(y == 23 && x == 13){
-                        turnRight();
-                    }
-                    else if(y == 23 && x == 11){
+                    } else if (
+                            (y == 29 && x == 15) ||
+                                    (y == 26 && x == 13) ||
+                                    (y == 23 && x == 11)
+                    ) {
                         turnLeft();
                     }
                 }
-                else if(ruta.equals("B")){
-                    if(y == 14 && x==11){
-                        turnRight();
-                    }
-                    else if(y==14 && x==7){
-                        turnRight();
-                    }
-                    else if(y==15 && x==7){
-                        turnLeft();
-                    }
-                    else if(y==15 && x==2){
-                        turnRight();
-                    }
-                    else if(y==17 && x==2){
-                        turnLeft();
-                    }
-                    else if(y==17 && x==1){
-                        turnLeft();
-                    }
-                }
-                else if(ruta.equals("AE")) {
-                    
-                }
-                else{
 
+                if (ruta.equals("B")) {
+                    if (
+                            (y == 14 && x == 11) ||
+                                    (y == 14 && x == 7) ||
+                                    (y == 15 && x == 2)
+                    ) {
+                        turnRight();
+                    } else if (
+                            (y == 15 && x == 7) ||
+                                    (y == 17 && x == 2) ||
+                                    (y == 17 && x == 1)
+                    ) {
+                        turnLeft();
+                    }
                 }
-            }
+
+                if (ruta.equals("AN")) {
+                    if (
+                            (y == 18 && x == 16) ||
+                                    (y == 11 && x == 16) ||
+                                    (y == 5 && x == 13) ||
+                                    (y == 2 && x == 12)
+                    ) {
+                        turnRight();
+                    } else if (
+                            (y == 18 && x == 11) ||
+                                    (y == 11 && x == 13) ||
+                                    (y == 5 && x == 12) ||
+                                    (y == 2 && x == 10) ||
+                                    (y == 1 && x == 10)
+                    ) {
+                        turnLeft();
+                    }
+                }
+
+                if (!ruta.equals("B") && !ruta.equals("AN")) {
+                    if (
+                            (y == 34 && x == 17)
+                    ) {
+                        turnRight();
+                    } else if (
+                            (y == 32 && x == 17) ||
+                                    (y == 34 && x == 20) ||
+                                    (y == 35 && x == 20)
+                    ) {
+                        turnLeft();
+                    }
+                }
             avanzar();
         }
         esperar_inicializacion();

@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Sistema {
 
-    boolean esta_inicializado;
+    char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
     public final ReentrantLock bloqueo = new ReentrantLock();
     ArrayList<Tren> taller = new ArrayList<>();
     ArrayList<Tren> lineaA = new ArrayList<>();
@@ -25,21 +25,21 @@ public class Sistema {
         for(int i = 0; i < 10; i++){
             if(cont_aux == 3) {
                 taller.add(new Tren(y, x, actual_direction, Color.GREEN, this));
-                taller.get(cont).setLinea("B");
+                taller.get(cont).setRuta("B");
                 cont_aux = 1;
             }
             else{
                 taller.add(new Tren(y, x, actual_direction, Color.BLUE, this));
                 if(cont_aux == 1){
-                    taller.get(cont).setLinea("AN");
+                    taller.get(cont).setRuta("B");
                 }
                 else{
-                    taller.get(cont).setLinea("AE");
+                    taller.get(cont).setRuta("B");
                 }
                 cont_aux++;
             }
             posiciones[y][x] = true;
-            taller.get(cont).setSgte_accion("salirtaller");
+            taller.get(cont).setAccion("salirtaller");
             if(actual_direction == Directions.East) x++;
             else if(actual_direction == Directions.West) x--;
             else if(actual_direction == Directions.North) y++;

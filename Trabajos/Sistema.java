@@ -8,9 +8,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Sistema {
 
-    char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
+    volatile char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
     public final ReentrantLock bloqueo = new ReentrantLock();
-    short trenes_extremos = 0;
+    volatile short trenes_extremos = 0;
     ArrayList<Tren> taller = new ArrayList<>();
     ArrayList<Tren> lineaA = new ArrayList<>();
     ArrayList<Tren> lineaB = new ArrayList<>();
@@ -26,7 +26,7 @@ public class Sistema {
         for(int i = 0; i < 10; i++){
             if(cont_aux == 3) {
                 taller.add(new Tren(y, x, actual_direction, Color.GREEN, this));
-                taller.get(cont).setRuta("B");
+                taller.get(cont).setRuta("BSA");
                 cont_aux = 1;
             }
             else{
@@ -64,4 +64,8 @@ public class Sistema {
         new Thread(taller.get(taller.size()-3)).start();
     }
 
+    public void empezar_ruta(){
+        while(trenes_extremos != 3);
+        estado = 'R';
+    }
 }

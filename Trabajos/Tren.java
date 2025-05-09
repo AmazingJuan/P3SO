@@ -49,19 +49,19 @@ class Tren extends Robot
     public void salir_taller(){
 
          while (x != 16 || y != 32 ){
-            if (x == 15 && y == 35 && !facingEast()){ //El facing dice que se gire el hp si es que ya no está mirando donde debería
+            if (x == 15 && y == 35 && facingNorth()){ //El facing dice que se gire el hp si es que ya no está mirando donde debería
                 turnLeft(); 
             }
-            if (x == 1 && y == 35 && !facingSouth()){
+            if (x == 1 && y == 35 && facingWest()){
                 turnLeft(); 
             }
-            if (x == 1 && y == 34 && !facingWest()){
+            if (x == 1 && y == 34 && facingSouth()){
                 turnLeft(); 
             }
-            if (x == 14 && y == 34 && !facingSouth()){
+            if (x == 14 && y == 34 && facingEast()){
                 turnRight(); 
             }
-            if (x == 14 && y == 32 && !facingEast()){
+            if (x == 14 && y == 32 && facingSouth()){
                 turnLeft(); 
             }  
             avanzar();

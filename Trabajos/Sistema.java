@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Sistema {
+public class Sistema implements Runnable {
 
     volatile char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
     public final ReentrantLock bloqueo = new ReentrantLock();
@@ -66,15 +66,28 @@ public class Sistema {
             new Thread(taller.get(numero_tren)).start();
     }
 
+    public void run(){
+        inicializar();
+        proceso_ruta();
+    }
+
     public void proceso_ruta(){
         while(trenes_extremos != 3);
         estado = 'R';
-        int current_tren = 28;
+        /*
+        int current_tren = taller.size()-4;
         while(estado != 'C'){
             if(current_tren != -1){
                 despachar(current_tren);
+                try {
+                    Thread.sleep(9000); // duerme 3 segundos
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 current_tren--;
             }
         }
+
+         */
     }
 }

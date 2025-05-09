@@ -23,7 +23,7 @@ public class Sistema {
 
         int x = 15, y = 34;
 
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 32; i++){
             if(cont_aux == 3) {
                 taller.add(new Tren(y, x, actual_direction, Color.GREEN, this));
                 taller.get(cont).setRuta("BSA");
@@ -54,18 +54,27 @@ public class Sistema {
         }
     }
 
-    public static void despachar(){
-
-    }
-
     public void inicializar(){
-        new Thread(taller.getLast()).start();
-        new Thread(taller.get(taller.size()-2)).start();
-        new Thread(taller.get(taller.size()-3)).start();
+
+        new Thread(taller.getLast()).start(); 
+        new Thread(taller.get(taller.size()-2)).start(); 
+        new Thread(taller.get(taller.size()-3)).start(); 
     }
 
-    public void empezar_ruta(){
+
+    public void despachar(int numero_tren){
+            new Thread(taller.get(numero_tren)).start();
+    }
+
+    public void proceso_ruta(){
         while(trenes_extremos != 3);
         estado = 'R';
+        int current_tren = 28;
+        while(estado != 'C'){
+            if(current_tren != -1){
+                despachar(current_tren);
+                current_tren--;
+            }
+        }
     }
 }

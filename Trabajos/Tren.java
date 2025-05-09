@@ -48,28 +48,24 @@ class Tren extends Robot
 
     public void salir_taller(){
 
-        while(x != 15 || y != 32){
-            if(!esperando_moverse) {
-                if ((y == 35 && x == 15) || (x == 1 && y == 35)
-                        || (x == 1 && y == 34)) turnLeft();
-
-                if (y == 34 && x == 14) {
-                    turnLeft();
-                    turnLeft();
-                    turnLeft();
-                }
-
-                if (y == 32 && x == 14) {
-                    turnLeft();
-                    turnLeft();
-                    turnLeft();
-                    turnLeft();
-                    turnLeft();
-                }
+         while (x != 16 || y != 32 ){
+            if (x == 15 && y == 35 && !facingEast()){ //El facing dice que se gire el hp si es que ya no está mirando donde debería
+                turnLeft(); 
             }
+            if (x == 1 && y == 35 && !facingSouth()){
+                turnLeft(); 
+            }
+            if (x == 1 && y == 34 && !facingWest()){
+                turnLeft(); 
+            }
+            if (x == 14 && y == 34 && !facingSouth()){
+                turnRight(); 
+            }
+            if (x == 14 && y == 32 && !facingEast()){
+                turnLeft(); 
+            }  
             avanzar();
         }
-        System.out.println("aca estoy");
         ir_extremos();
 
 
@@ -207,12 +203,10 @@ class Tren extends Robot
             y = next_y;
             ref_sistema.posiciones[next_y][next_x] = true;
             ref_sistema.bloqueo.unlock();
-            esperando_moverse = false;
             move();
         }
         else{
             ref_sistema.bloqueo.unlock();
-            esperando_moverse = true;
         }
 
     }
@@ -220,106 +214,102 @@ class Tren extends Robot
     public void ruta(){
         System.out.println("aca estoy");
         while(ref_sistema.estado == 'R') {
-            if (!esperando_moverse) {
-                if(nextToABeeper()) {
-                    try {
-                        Thread.sleep(3000); // duerme 3 segundos
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    if(x == 1 && y == 16 && ruta.equals("BSJ")) ruta = "BSA";
-                    else if(x == 19 && y == 35 && ruta.equals("AN")) ruta = "AE";
-                    else if(x == 11 && y == 1 && ruta.equals("AE")) ruta = "AN";
-
-                }
-                if (ruta.equals("BSA")) {
-                    if (y == 14 && x == 1) {
-                        turnLeft();
-                    }
-                    if (y == 14 && x == 6) {
-                        turnRight();
-                    }
-                    if (y == 13 && x == 6) {
-                        turnLeft();
-                    }
-                    if (y == 13 && x == 14) {
-                        turnLeft();
-                    }
-                    if (y == 14 && x == 14) {
-                        turnRight();
-                    }
-                    if (y == 14 && x == 15) {
-                        turnLeft();
-                        turnLeft();
-                        ruta = "BSJ";
-                    }
-                } else if (ruta.equals("BSJ")) {
-                    if(y == 14 && x == 7 ) {
-                        turnRight();
-                    }
-                    else if(y == 15 && x == 7){
-                        turnLeft();
-                    }
-                    else if(y == 15 && x == 2){
-                        turnRight();
-                    }
-                    else if(y == 17 && x == 2){
-                        turnLeft();
-                    }
-                    else if(y == 17 && x == 1){
-                        turnLeft();
-                    }
-                }
-                else if (ruta.equals("AE")) {
-                    if (
-                                    (y == 29 && x == 16) ||
-                                    (y == 26 && x == 15) ||
-                                    (y == 23 && x == 13) ||
-                                    (y == 18 && x == 16) ||
-                                    (y == 11 && x == 16) ||
-                                    (y == 5 && x == 13) ||
-                                    (y == 2 && x == 12)
-                    ) {
-                        turnRight();
-                    } else if (
-                            (y == 29 && x == 15) ||
-                                    (y == 26 && x == 13) ||
-                                    (y == 23 && x == 11) ||
-                                    (y == 18 && x == 11) ||
-                                    (y == 11 && x == 13) ||
-                                    (y == 5 && x == 12) ||
-                                    (y == 2 && x == 10) ||
-                                    (y == 1 && x == 10) ||
-                                    (y == 35 && x == 16)
-                    ) {
-                        turnLeft();
-                    }
-                } else {
-                    if(     (y == 1 && x == 13) ||
-                            (y == 4 && x == 14) ||
-                            (y == 10 && x == 17) ||
-                            (y == 19 && x == 17) ||
-                            (y == 22 && x == 14) ||
-                            (y == 25 && x == 16) ||
-                            (y == 28 && x == 17) ||
-                            (y == 34 && x == 20) ||
-                            (y == 35 && x == 20)) {
-                        turnLeft();
-                    }
-                    else if((y == 4 && x == 13) ||
-                            (y == 10 && x == 14) ||
-                            (y == 19 && x == 12) ||
-                            (y == 22 && x == 12) ||
-                            (y == 25 && x == 14) ||
-                            (y == 28 && x == 16 ) ||
-                            (y == 34 && x == 17) ||
-                            (y == 35 && x == 20)) {
-                        turnRight();
-                    }
-
+            if(nextToABeeper()) {
+                try {
+                    Thread.sleep(3000); // duerme 3 segundos
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
+                if(x == 1 && y == 16 && ruta.equals("BSJ")) ruta = "BSA";
+                else if(x == 19 && y == 35 && ruta.equals("AN")) ruta = "AE";
+                else if(x == 11 && y == 1 && ruta.equals("AE")) ruta = "AN";
+
+            }
+            if (ruta.equals("BSA")) {
+                if (y == 14 && x == 1) {
+                    turnLeft();
+                }
+                if (y == 14 && x == 6) {
+                    turnRight();
+                }
+                if (y == 13 && x == 6) {
+                    turnLeft();
+                }
+                if (y == 13 && x == 14) {
+                    turnLeft();
+                }
+                if (y == 14 && x == 14) {
+                    turnRight();
+                }
+                if (y == 14 && x == 15) {
+                    turnLeft();
+                    turnLeft();
+                    ruta = "BSJ";
+                }
+            } else if (ruta.equals("BSJ")) {
+                if(y == 14 && x == 7 ) {
+                    turnRight();
+                }
+                else if(y == 15 && x == 7){
+                    turnLeft();
+                }
+                else if(y == 15 && x == 2){
+                    turnRight();
+                }
+                else if(y == 17 && x == 2){
+                    turnLeft();
+                }
+                else if(y == 17 && x == 1){
+                    turnLeft();
+                }
+            }
+            else if (ruta.equals("AE")) {
+                if (
+                                (y == 29 && x == 16) ||
+                                (y == 26 && x == 15) ||
+                                (y == 23 && x == 13) ||
+                                (y == 18 && x == 16) ||
+                                (y == 11 && x == 16) ||
+                                (y == 5 && x == 13) ||
+                                (y == 2 && x == 12)
+                ) {
+                    turnRight();
+                } else if (
+                        (y == 29 && x == 15) ||
+                                (y == 26 && x == 13) ||
+                                (y == 23 && x == 11) ||
+                                (y == 18 && x == 11) ||
+                                (y == 11 && x == 13) ||
+                                (y == 5 && x == 12) ||
+                                (y == 2 && x == 10) ||
+                                (y == 1 && x == 10) ||
+                                (y == 35 && x == 16)
+                ) {
+                    turnLeft();
+                }
+            } else {
+                if(     (y == 1 && x == 13) ||
+                        (y == 4 && x == 14) ||
+                        (y == 10 && x == 17) ||
+                        (y == 19 && x == 17) ||
+                        (y == 22 && x == 14) ||
+                        (y == 25 && x == 16) ||
+                        (y == 28 && x == 17) ||
+                        (y == 34 && x == 20) ||
+                        (y == 35 && x == 20)) {
+                    turnLeft();
+                }
+                else if((y == 4 && x == 13) ||
+                        (y == 10 && x == 14) ||
+                        (y == 19 && x == 12) ||
+                        (y == 22 && x == 12) ||
+                        (y == 25 && x == 14) ||
+                        (y == 28 && x == 16 ) ||
+                        (y == 34 && x == 17) ||
+                        (y == 35 && x == 20)) {
+                    turnRight();
+                }
 
             }
             avanzar();

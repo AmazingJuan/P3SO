@@ -9,9 +9,9 @@ public class Main {
         World.setVisible(true);
         World.setDelay(0);
         Sistema sistema_metro = new Sistema();
-        World.setDelay(5);
+        World.setDelay(50);
         sistema_metro.inicializar();
-        sistema_metro.empezar_ruta();
+        sistema_metro.proceso_ruta();
     }
 
 }

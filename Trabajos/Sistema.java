@@ -8,13 +8,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Sistema implements Runnable {
 
-    volatile char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
+    public volatile char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
     public final ReentrantLock bloqueo = new ReentrantLock();
     volatile short trenes_extremos = 0;
     ArrayList<Tren> taller = new ArrayList<>();
-    ArrayList<Tren> lineaA = new ArrayList<>();
-    ArrayList<Tren> lineaB = new ArrayList<>();
-
+    ArrayList<Tren> enRuta = new ArrayList<>();
     boolean[][] posiciones = new boolean[36][21];
     public Sistema(){
         short cont = 0;
@@ -49,22 +47,26 @@ public class Sistema implements Runnable {
             if(y == 35 && x == 15) actual_direction = Directions.West;
             else if((y == 35 && x == 1) || (y == 34 && x == 14) ) actual_direction = Directions.South;
             else if((y == 34 && x == 1) || (y == 32 && x == 14)) actual_direction = Directions.East;
-
             cont++;
         }
+
+        for(int i = 0; i < 32; i++) new Thread(taller.get(i)).start();
+
     }
 
     public void inicializar(){
 
-        new Thread(taller.getLast()).start(); 
-        new Thread(taller.get(taller.size()-2)).start(); 
-        new Thread(taller.get(taller.size()-3)).start(); 
     }
 
 
-    public void despachar(int numero_tren){
-            new Thread(taller.get(numero_tren)).start();
-    }
+    public void despachar(){
+        bloqueo.lock();
+        System.out.println(taller.size());
+        taller.getLast().salida_permitida = true;
+        enRuta.add(taller.getLast());
+        taller.remove(taller.getLast());
+        bloqueo.unlock();
+        }
 
     public void run(){
         inicializar();
@@ -72,22 +74,18 @@ public class Sistema implements Runnable {
     }
 
     public void proceso_ruta(){
-        while(trenes_extremos != 3);
-        estado = 'R';
-        /*
-        int current_tren = taller.size()-4;
+        while(trenes_extremos != 3 || estado != 'R');
         while(estado != 'C'){
-            if(current_tren != -1){
-                despachar(current_tren);
+            System.out.println("ando aca camarada");
+            if(taller.size() != 0){
+                System.out.println("ando aca camarada 2");
+                despachar();
                 try {
-                    Thread.sleep(9000); // duerme 3 segundos
+                    Thread.sleep(20000); // duerme 3 segundos
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                current_tren--;
             }
         }
-
-         */
     }
 }

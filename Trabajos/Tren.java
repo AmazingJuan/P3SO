@@ -15,7 +15,7 @@ class Tren extends Robot
     String accion;
     Sistema ref_sistema;
     boolean esperando_moverse = false;
-
+    volatile boolean salida_permitida = false;
     public void setRuta(String ruta) {
         this.ruta = ruta;
     }
@@ -48,23 +48,27 @@ class Tren extends Robot
 
     public void salir_taller(){
 
-         while (x != 16 || y != 32 ){
-            if (x == 15 && y == 35 && facingNorth()){ //El facing dice que se gire el hp si es que ya no está mirando donde debería
-                turnLeft(); 
+        while (!salida_permitida || (x != 15 || y != 32) ){
+            if(x != 15 || y != 32 ) {
+                if (!esperando_moverse) {
+                    if (x == 15 && y == 35 && facingNorth()) { //El facing dice que se gire el hp si es que ya no está mirando donde debería
+                        turnLeft();
+                    }
+                    if (x == 1 && y == 35 && facingWest()) {
+                        turnLeft();
+                    }
+                    if (x == 1 && y == 34 && facingSouth()) {
+                        turnLeft();
+                    }
+                    if (x == 14 && y == 34 && facingEast()) {
+                        turnRight();
+                    }
+                    if (x == 14 && y == 32 && facingSouth()) {
+                        turnLeft();
+                    }
+                }
+                avanzar();
             }
-            if (x == 1 && y == 35 && facingWest()){
-                turnLeft(); 
-            }
-            if (x == 1 && y == 34 && facingSouth()){
-                turnLeft(); 
-            }
-            if (x == 14 && y == 34 && facingEast()){
-                turnRight(); 
-            }
-            if (x == 14 && y == 32 && facingSouth()){
-                turnLeft(); 
-            }  
-            avanzar();
         }
         ir_extremos();
 
@@ -204,9 +208,12 @@ class Tren extends Robot
             ref_sistema.posiciones[next_y][next_x] = true;
             ref_sistema.bloqueo.unlock();
             move();
+            esperando_moverse = false;
+
         }
         else{
             ref_sistema.bloqueo.unlock();
+            esperando_moverse = true;
         }
 
     }

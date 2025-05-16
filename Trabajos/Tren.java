@@ -51,7 +51,7 @@ class Tren extends Robot
         while (!salida_permitida || (x != 15 || y != 32) ){
             if(x != 15 || y != 32 ) {
                 if (!esperando_moverse) {
-                    if (x == 15 && y == 35 && facingNorth()) { //El facing dice que se gire el hp si es que ya no está mirando donde debería
+                    if (x == 15 && y == 35 && facingNorth()) {
                         turnLeft();
                     }
                     if (x == 1 && y == 35 && facingWest()) {
@@ -67,6 +67,7 @@ class Tren extends Robot
                         turnLeft();
                     }
                 }
+                
                 avanzar();
             }
         }
@@ -182,7 +183,6 @@ class Tren extends Robot
 
     public void esperar_inicializacion(){
         while(ref_sistema.estado != 'R');
-        System.out.println("no me digan");
         accion = "ruta";
         ejecutar_accion();
     }
@@ -193,46 +193,80 @@ class Tren extends Robot
     }
 
     public void avanzar(){
-
+        ref_sistema.lock_move.lock();
         int next_x = x;
         int next_y = y;
         if (facingEast()) next_x++;
         else if (facingWest()) next_x--;
         else if (facingNorth()) next_y++;
         else if (facingSouth()) next_y--;
-        ref_sistema.bloqueo.lock();
-        if(!ref_sistema.posiciones[next_y][next_x]) {
-            ref_sistema.posiciones[y][x] = false;
-            x = next_x;
-            y = next_y;
-            ref_sistema.posiciones[next_y][next_x] = true;
-            ref_sistema.bloqueo.unlock();
-            move();
-            esperando_moverse = false;
+        try {
+            if (!ref_sistema.posiciones[next_y - 1][next_x - 1]) {
+                ref_sistema.posiciones[y - 1][x - 1] = false;
+                x = next_x;
+                y = next_y;
+                ref_sistema.posiciones[next_y - 1][next_x - 1] = true;
+                esperando_moverse = false;
+                ref_sistema.lock_move.unlock();
+                move();
+            } else {
+                ref_sistema.lock_move.unlock();
+                esperando_moverse = true;
+            }
+        } catch (Exception e) {
+            System.out.println("Y: " + next_y + "; X: " + next_x);
+            throw new RuntimeException(e);
 
-        }
-        else{
-            ref_sistema.bloqueo.unlock();
-            esperando_moverse = true;
         }
 
     }
 
+    public void esperar(){
+        try {
+            Thread.sleep(3000); // duerme 3 segundos
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void esperar_san_antonio(){
+        while(ref_sistema.tren_sanantonio){
+            try {
+                ref_sistema.condicion_san_antonio.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public void ruta(){
-        System.out.println("aca estoy");
         while(ref_sistema.estado == 'R') {
             if(nextToABeeper()) {
-                try {
-                    Thread.sleep(3000); // duerme 3 segundos
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+                esperar();
                 if(x == 1 && y == 16 && ruta.equals("BSJ")) ruta = "BSA";
                 else if(x == 19 && y == 35 && ruta.equals("AN")) ruta = "AE";
                 else if(x == 11 && y == 1 && ruta.equals("AE")) ruta = "AN";
+                if (y == 13 && x == 12) {
 
+                    ref_sistema.lock_san_antonio.lock();
+                    if(ref_sistema.tren_sanantonio){
+                        esperar_san_antonio();
+                        ref_sistema.tren_sanantonio = true;
+                    }
+                    else{
+                        ref_sistema.tren_sanantonio = true;
+                    }
+                    ref_sistema.lock_san_antonio.unlock();
+                }
             }
+
+            if(y == 14 && x == 13){
+                ref_sistema.lock_san_antonio.lock();
+                ref_sistema.tren_sanantonio = false;
+                ref_sistema.condicion_san_antonio.signal();
+                ref_sistema.lock_san_antonio.unlock();
+            }
+
             if (ruta.equals("BSA")) {
                 if (y == 14 && x == 1) {
                     turnLeft();
@@ -243,6 +277,7 @@ class Tren extends Robot
                 if (y == 13 && x == 6) {
                     turnLeft();
                 }
+
                 if (y == 13 && x == 14) {
                     turnLeft();
                 }
@@ -313,8 +348,7 @@ class Tren extends Robot
                         (y == 22 && x == 12) ||
                         (y == 25 && x == 14) ||
                         (y == 28 && x == 16 ) ||
-                        (y == 34 && x == 17) ||
-                        (y == 35 && x == 20)) {
+                        (y == 34 && x == 17) ) {
                     turnRight();
                 }
 

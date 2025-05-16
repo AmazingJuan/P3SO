@@ -11,22 +11,15 @@ public class Main {
         World.setVisible(true);
         World.setDelay(0);
         Sistema sistema_metro = new Sistema();
-        World.setDelay(20);
+        World.setDelay(30);
         String decision = "";
         new Thread(sistema_metro).start();
-        System.out.println("Pase 1");
-        sistema_metro.despachar();
-        System.out.println("Pase 2");
-        sistema_metro.despachar();
-        System.out.println("Pase 3");
-        sistema_metro.despachar();
-        while(!decision.toLowerCase().equals("y")){
-            System.out.print("¿Desea dar comienzo a la ruta del sistema metro? (Y): ");
+        while(sistema_metro.trenes_extremos != 3);
+        while(!decision.equalsIgnoreCase("si")){
+            System.out.println("Son las 4:20? (Si/No)");
             decision = scanner.nextLine();
         }
         sistema_metro.estado = 'R';
-
-
     }
 
 }

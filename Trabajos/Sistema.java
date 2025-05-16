@@ -1,19 +1,23 @@
 package Trabajos;
 
-import Trabajos.Tren;
 import kareltherobot.Directions;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Condition;
 
 public class Sistema implements Runnable {
 
     public volatile char estado = 'I'; //I para inicialización, R para ruta, y C para cierre.
-    public final ReentrantLock bloqueo = new ReentrantLock();
+    public final ReentrantLock lock_move = new ReentrantLock();
+    public final ReentrantLock lock_san_antonio = new ReentrantLock();
+    public final Condition condicion_san_antonio = lock_san_antonio.newCondition();
     volatile short trenes_extremos = 0;
     ArrayList<Tren> taller = new ArrayList<>();
     ArrayList<Tren> enRuta = new ArrayList<>();
-    boolean[][] posiciones = new boolean[36][21];
+    volatile boolean[][] posiciones = new boolean[36][21];
+    volatile boolean tren_sanantonio = false;
     public Sistema(){
         short cont = 0;
         short cont_aux = 1;
@@ -37,7 +41,7 @@ public class Sistema implements Runnable {
                 }
                 cont_aux++;
             }
-            posiciones[y][x] = true;
+            posiciones[y - 1][x - 1] = true;
             taller.get(cont).setAccion("salirtaller");
             if(actual_direction == Directions.East) x++;
             else if(actual_direction == Directions.West) x--;
@@ -55,36 +59,37 @@ public class Sistema implements Runnable {
     }
 
     public void inicializar(){
-
+        despachar();
+        despachar();
+        despachar();
     }
 
 
     public void despachar(){
-        bloqueo.lock();
-        System.out.println(taller.size());
         taller.getLast().salida_permitida = true;
         enRuta.add(taller.getLast());
         taller.remove(taller.getLast());
-        bloqueo.unlock();
-        }
+    }
 
     public void run(){
         inicializar();
         proceso_ruta();
     }
 
+    public void esperar(){
+        try {
+            Thread.sleep(20000); // duerme 3 segundos
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void proceso_ruta(){
         while(trenes_extremos != 3 || estado != 'R');
         while(estado != 'C'){
-            System.out.println("ando aca camarada");
             if(taller.size() != 0){
-                System.out.println("ando aca camarada 2");
                 despachar();
-                try {
-                    Thread.sleep(20000); // duerme 3 segundos
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                esperar();
             }
         }
     }
